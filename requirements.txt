@@ -19,3 +19,5 @@ chromadb
 sentence-transformers
 
 streamlit
+
+pre-commit

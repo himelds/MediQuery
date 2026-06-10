@@ -4,6 +4,7 @@ venv/
 __pycache__/
 *.pyc
 *.pyo
-.env
 data/cache/ 
 !data/eval/
+.ruff_cache/
+.pre-commit-cache/

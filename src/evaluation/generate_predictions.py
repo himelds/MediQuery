@@ -13,7 +13,7 @@ from src.rag.baseline_rag import (
 )
 
 # Smoke test mode
-LIMIT = 3
+LIMIT = None
 
 
 def main():

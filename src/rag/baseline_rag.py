@@ -17,7 +17,8 @@ from pathlib import Path
 import chromadb
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from dotenv import load_dotenv
-from openai import OpenAI
+from google import genai
+from google.genai import types
 from tqdm import tqdm
 
 load_dotenv()
@@ -29,7 +30,7 @@ COLLECTION_NAME = "medquad_baseline"
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 TOP_K           = 5
 BATCH_SIZE      = 200
-LLM_MODEL       = "google/gemma-4-31b-it:free"
+LLM_MODEL       = "gemma-4-31b-it"  # Verify exact name in AI Studio
 
 # Embedding function (runs locally, no API cost)
 embedding_fn = SentenceTransformerEmbeddingFunction(model_name=EMBEDDING_MODEL)
@@ -73,7 +74,7 @@ def _index_corpus(chroma_client):
 
         collection.add(
             ids       = [f"doc_{i+j}" for j in range(len(batch))],
-            documents = [doc["answer"] for doc in batch],   # text to embed
+            documents = [doc["answer"] for doc in batch],
             metadatas = [
                 {
                     "question"  : doc["question"],
@@ -105,10 +106,7 @@ def retrieve(collection, query: str, top_k: int = TOP_K) -> tuple[list, list]:
 
 def generate(query: str, docs: list[str], metas: list[dict]) -> str:
     """Send retrieved context + question to LLM and return answer."""
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=os.getenv("OPENROUTER_API_KEY"),
-    )
+    client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
     # Build numbered context block
     context = ""
@@ -136,13 +134,13 @@ Question: {query}
 
 Answer:"""
 
-    response = client.chat.completions.create(
+    response = client.models.generate_content(
         model=LLM_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.1,
+        contents=prompt,
+        config=types.GenerateContentConfig(temperature=0.1),
     )
 
-    return response.choices[0].message.content
+    return response.text
 
 
 # Full Pipeline
@@ -167,11 +165,9 @@ def ask(collection, query: str) -> str:
 # Main
 
 def main():
-    # Persistent ChromaDB — data saved to data/chroma_db/
     chroma_client = chromadb.PersistentClient(path=str(CHROMA_DIR))
     collection    = get_collection(chroma_client)
 
-    # Test questions
     test_questions = [
         "What is polycystic kidney disease?",
         "How is Noonan syndrome inherited?",

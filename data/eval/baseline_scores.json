@@ -1,10 +1,10 @@
 {
   "pipeline_version": "baseline",
-  "evaluated_on": "2026-06-04",
-  "n_samples": 3,
-  "judge_model": "openrouter/owl-alpha",
-  "faithfulness": 0.7152777777777778,
-  "answer_relevancy": 0.4319823147152487,
-  "context_precision": 0.0,
-  "context_recall": 0.3863636363636364
+  "evaluated_on": "2026-06-10",
+  "n_samples": 49,
+  "judge_model": "llama-3.3-70b-versatile",
+  "faithfulness": 0.5844387755102041,
+  "answer_relevancy": 0.4147503865448518,
+  "context_precision": 0.4767857142574206,
+  "context_recall": 0.3632525029018241
 }
