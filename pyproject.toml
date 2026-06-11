@@ -6,5 +6,5 @@ target-version = "py311"
 # Default rules: E (pycodestyle errors), F (pyflakes), W (warnings)
 
 [tool.ruff.lint.per-file-ignores]
-# (intentional pattern — global cache state must be set before module init)
 "src/evaluation/run_ragas.py" = ["E402"]
+"src/evaluation/run_ragas_hybrid.py" = ["E402"]

@@ -21,3 +21,5 @@ sentence-transformers
 streamlit
 
 pre-commit
+
+rank-bm25
