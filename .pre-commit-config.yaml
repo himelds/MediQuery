@@ -1,29 +1,34 @@
-# .pre-commit-config.yaml
-# Setup: `pre-commit install` (one-time)
-# Hooks run automatically on every `git commit`.
-
 repos:
-  # ---- Basic file hygiene ----
+
+  # Basic file hygiene
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-      - id: check-added-large-files
-        args: ['--maxkb=500']
+      - id: check-json
+      - id: detect-private-key
       - id: check-merge-conflict
       - id: debug-statements
 
-  # ---- Ruff: lint + format ----
+      - id: check-added-large-files
+        args: ['--maxkb=10000']
+
+
+  # Ruff (lint + format)
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.16
     hooks:
       - id: ruff
         args: [--fix]
+
       - id: ruff-format
 
-  # ---- Gitleaks: secret detection (public repo) ----
+
+  # Secret detection
+
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.0
     hooks:
