@@ -58,7 +58,6 @@ def parse_xml_file(xml_path: Path) -> list[dict]:
         return records
 
     for qa_pair in qa_pairs.findall("QAPair"):
-
         pid = qa_pair.get("pid", "")
 
         question_element = qa_pair.find("Question")
@@ -101,20 +100,16 @@ def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     if not MEDQUAD_DIR.exists():
-        print(
-            f"ERROR: MedQuAD directory not found:\n"
-            f"{MEDQUAD_DIR.resolve()}"
-        )
+        print(f"ERROR: MedQuAD directory not found:\n{MEDQUAD_DIR.resolve()}")
         return
 
-    print(f"\nScanning MedQuAD Dataset")
+    print("\nScanning MedQuAD Dataset")
     print(f"Location: {MEDQUAD_DIR.resolve()}\n")
 
     all_records = []
     folder_stats = {}
 
     for xml_file in sorted(MEDQUAD_DIR.rglob("*.xml")):
-
         records = parse_xml_file(xml_file)
 
         if not records:
@@ -122,10 +117,7 @@ def main():
 
         folder_name = xml_file.parent.name
 
-        folder_stats[folder_name] = (
-            folder_stats.get(folder_name, 0)
-            + len(records)
-        )
+        folder_stats[folder_name] = folder_stats.get(folder_name, 0) + len(records)
 
         all_records.extend(records)
 
