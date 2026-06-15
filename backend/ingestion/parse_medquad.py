@@ -41,7 +41,6 @@ def parse_xml_file(xml_path: Path) -> list[dict]:
         print(f"[SKIP] {xml_path.name} | Parse Error: {e}")
         return records
 
-    doc_id = root.get("id", "")
     source = root.get("source", xml_path.parent.name)
     source_url = root.get("url", "")
 
@@ -80,7 +79,7 @@ def parse_xml_file(xml_path: Path) -> list[dict]:
 
         records.append(
             {
-                "id": f"{doc_id}_{pid}",
+                "id": f"{xml_path.parent.name}_{xml_path.stem}_{pid}",
                 "qid": qid,
                 "question": question,
                 "answer": answer,
