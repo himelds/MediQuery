@@ -55,3 +55,7 @@ NURSE_ALLOWED_QTYPES = [
     "considerations",
     "frequency",
 ]
+
+# Auth
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRY_MINUTES = 60

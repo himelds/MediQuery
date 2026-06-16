@@ -11,40 +11,11 @@ the pipeline determines which collections and metadata filters
 apply for the given role.
 """
 
-from backend.config import NURSE_ALLOWED_QTYPES, RERANK_TOP_K, TOP_K
+from backend.auth.roles import get_allowed_collections, get_filters_for_role
+from backend.config import RERANK_TOP_K, TOP_K
 from backend.generation.generator import generate
 from backend.retrieval.hybrid import hybrid_search
 from backend.retrieval.reranker import rerank
-
-# Role → allowed collections mapping
-ROLE_COLLECTIONS: dict[str, list[str]] = {
-    "doctor": ["medical", "clinical", "nursing", "general"],
-    "nurse": ["medical", "nursing", "general"],
-    "billing_executive": ["billing", "general"],
-    "technician": ["equipment", "general"],
-    "admin": ["medical", "clinical", "billing", "equipment", "nursing", "general"],
-}
-
-
-def _get_filters_for_role(
-    role: str, collection_name: str
-) -> tuple[dict | None, list[str] | None]:
-    """
-    Determine metadata filters based on role and collection.
-
-    Returns:
-        (where_filter, allowed_qtypes) tuple.
-        - where_filter: ChromaDB 'where' clause for semantic search.
-        - allowed_qtypes: list for BM25 filtering.
-        Both are None if no filtering needed.
-    """
-    # Only nurses have qtype restrictions, and only on medical collection
-    if role == "nurse" and collection_name == "medical":
-        return (
-            {"qtype": {"$in": NURSE_ALLOWED_QTYPES}},
-            NURSE_ALLOWED_QTYPES,
-        )
-    return None, None
 
 
 def ask(query: str, role: str) -> dict:
@@ -63,7 +34,7 @@ def ask(query: str, role: str) -> dict:
             - collections_searched:  Which collections were queried.
     """
     # 1. Determine allowed collections
-    allowed = ROLE_COLLECTIONS.get(role)
+    allowed = get_allowed_collections(role)
     if allowed is None:
         return {
             "answer": f"Unknown role: {role}",
@@ -76,7 +47,7 @@ def ask(query: str, role: str) -> dict:
     all_candidates = []
 
     for collection_name in allowed:
-        where_filter, allowed_qtypes = _get_filters_for_role(role, collection_name)
+        where_filter, allowed_qtypes = get_filters_for_role(role, collection_name)
 
         results = hybrid_search(
             query=query,
@@ -93,7 +64,15 @@ def ask(query: str, role: str) -> dict:
         all_candidates.extend(results)
 
     # 3. Rerank all candidates together
-    reranked = rerank(query, all_candidates, top_k=RERANK_TOP_K)
+    per_collection_top = []
+    from itertools import groupby
+
+    all_candidates.sort(key=lambda x: x.get("collection", ""))
+    for _, group in groupby(all_candidates, key=lambda x: x.get("collection", "")):
+        group_list = sorted(list(group), key=lambda x: x.get("score", 0), reverse=True)
+        per_collection_top.extend(group_list[:5])
+
+    reranked = rerank(query, per_collection_top, top_k=RERANK_TOP_K)
 
     # 4. Generate answer
     answer = generate(query, reranked, role=role)
