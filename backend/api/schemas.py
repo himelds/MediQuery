@@ -13,10 +13,6 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class ChatRequest(BaseModel):
-    question: str
-
-
 # --- Responses ---
 
 
@@ -45,3 +41,8 @@ class ChatResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     collections: dict[str, int]
+
+
+class ChatRequest(BaseModel):
+    question: str
+    history: list[dict] = []

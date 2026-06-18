@@ -14,20 +14,20 @@ def _hash(password: str) -> str:
 
 
 DEMO_USERS = {
-    "dr.mehta": {
+    "dr.bijoy": {
         "password_hash": _hash("doctor123"),
         "role": "doctor",
-        "display_name": "Dr. Mehta",
+        "display_name": "Dr. Bijoy",
     },
     "nurse.priya": {
         "password_hash": _hash("nurse123"),
         "role": "nurse",
         "display_name": "Nurse Priya",
     },
-    "billing.karim": {
+    "billing.niloy": {
         "password_hash": _hash("billing123"),
         "role": "billing_executive",
-        "display_name": "Billing Karim",
+        "display_name": "Billing Niloy",
     },
     "tech.fatima": {
         "password_hash": _hash("tech123"),

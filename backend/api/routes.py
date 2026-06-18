@@ -43,8 +43,7 @@ def login(request: LoginRequest):
 
 @router.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest, user: dict = Depends(get_current_user)):
-    """Process a question through the role-filtered RAG pipeline."""
-    result = ask(query=request.question, role=user["role"])
+    result = ask(query=request.question, role=user["role"], history=request.history)
     return ChatResponse(**result)
 
 
