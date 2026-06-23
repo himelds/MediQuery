@@ -1,0 +1,10 @@
+# Development dependencies — not needed in production / Docker image.
+# Install with: pip install -r requirements-dev.txt
+
+# Testing
+httpx==0.28.1
+pytest==9.1.1
+pytest-cov==7.1.0
+
+# Linting
+ruff==0.15.18

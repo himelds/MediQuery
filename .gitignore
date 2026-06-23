@@ -1,13 +1,57 @@
+# ---- Environment & secrets ----
 .env
 .env.*
+*.pem
+*.key
+credentials.json
 
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.venv/
+venv/
+env/
+
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+.ipynb_checkpoints/
+
+# ---- Logs ----
+logs/
+*.log
+
+# ---- Next.js / Frontend ----
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.vercel/
+frontend/*.tsbuildinfo
+frontend/.env*.local
+
+# ---- Data ----
 data/raw/MedQuAD/
-
 data/chroma_db/
 data/bm25_index/
 
-frontend/node_modules/
-frontend/.next/
+# ---- ML artifacts ----
+*.pkl
+*.joblib
+.cache/
 
-__pycache__/
-*.pyc
+# ---- IDE / OS ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
